@@ -6,6 +6,8 @@ import platform
 from PyQt5 import QtWidgets, QtGui, QtCore
 import vlc
 from network import Client
+from __future__ import unicode_literals
+import yt_dlp as youtube_dl
 
 
 class MiniPlayer(QtWidgets.QMainWindow):
@@ -138,6 +140,23 @@ def main():
 
     _ = Client("localhost", 10000, data_queue)
     sys.exit(app.exec_())
+    
+ def my_hook(d):
+    if d['status'] == 'finished':
+        print('Done downloading, now converting ...')
+        
+ ydl_opts = {
+    'download_archive': 'archive.txt',
+    'ignoreerrors': True,
+    'nooverwrites': True,
+    'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best',       
+    'outtmpl': '저장 경로 템플릿',        
+    'noplaylist' : False,       
+    'progress_hooks': [my_hook],  
+}
+
+with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+    ydl.download(['http://www.youtube.com/watch?v=Lr9xbHtpAfU'])
 
 
 if __name__ == "__main__":
