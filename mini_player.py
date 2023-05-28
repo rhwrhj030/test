@@ -10,6 +10,7 @@ from __future__ import unicode_literals
 import yt_dlp as youtube_dl
 
 
+
 class MiniPlayer(QtWidgets.QMainWindow):
     """Stripped-down PyQt5-based media player class to sync with "master" video.
     """
@@ -125,7 +126,23 @@ class MiniPlayer(QtWidgets.QMainWindow):
         mtime = QtCore.QTime(0, 0, 0, 0)
         time = mtime.addMSecs(self.mediaplayer.get_time())
         self.statusbar.showMessage(time.toString())
+        
+def my_hook(d):
+    if d['status'] == 'finished':
+        print('Done downloading, now converting ...')
 
+ydl_opts = {
+    'download_archive': 'archive.txt',
+    'ignoreerrors': True,
+    'nooverwrites': True,
+    'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best',       
+    'outtmpl': '저장 경로 템플릿',        
+    'noplaylist' : False,       
+    'progress_hooks': [my_hook],  
+}
+
+with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+    ydl.download(['http://www.youtube.com/watch?v=Lr9xbHtpAfU'])
 
 def main():
     """Entry point for our simple vlc player
@@ -161,3 +178,4 @@ with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 
 if __name__ == "__main__":
     main()
+   
